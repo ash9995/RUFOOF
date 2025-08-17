@@ -3504,11 +3504,11 @@ const ValidationUtils = {
             '<td>-</td>';
         
         const memberTypeDisplay = member.isPredefined ? 
-            `${member.memberType} <span class="badge badge-primary">نظام</span>` : 
+            `${member.memberType} <span class=""></span>` : 
             member.memberType;
         
         return `
-            <tr ${member.isPredefined ? 'style="background-color: #f0f9ff;"' : ''}>
+            <tr ${member.isPredefined ? 'style="background-color:"' : ''}>
                 <td>${member.membershipNumber}</td>
                 <td>${member.fullName}</td>
                 <td>${memberTypeDisplay}</td>
