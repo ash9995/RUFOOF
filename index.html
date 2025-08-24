@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة المكتبات</title>
     <style>
+
+
+@font-face {
+    font-family: 'Byt';
+    src: url('byt-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Larken';
+    src: url('Larken-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
         :root {
             --primary-color: #44556A;
             --secondary-color: #44556A;
@@ -26,11 +43,40 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-family: 'Byt', 'Larken', 'Segoe UI', Tahoma, Arial, sans-serif;
             background-color: var(--light-bg);
             color: var(--text-color);
-            line-height: 1.6;
+            line-height: 1.5;
+        padding-bottom: 60px; /* Space for footer */
         }
+
+
+.card-title, .stat-number, .btn, .menu-item, .form-label {
+    font-family: 'Byt', 'Larken', 'Segoe UI', Tahoma, Arial, sans-serif;
+}
+        /* Footer Styles */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #44556A;
+            color: white;
+            padding: 0.5rem;
+            text-align: center;
+            z-index: 100;
+            border-top: 2px solid #91B9B4;
+        }
+
+        .footer a {
+            color: #91B9B4;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
 
         /* Login Modal */
         .login-modal {
@@ -623,7 +669,7 @@
 
         /* Print Styles */
         @media print {
-            .sidebar, .header, .btn { display: none !important; }
+            .sidebar, .header, .btn, .footer { display: none !important; }
             .main-content { margin: 0; padding: 0; }
         }
 
@@ -2027,6 +2073,12 @@
       </section>
   </main>
 
+ <footer class="footer">
+        <p>© رفـــوفـــ</p>
+        <p>صُنع في حائل ⛰️ </p>
+        <p>للدعم: <a href="mailto:aisha.a@ihr.com.sa">aisha.a@ihr.com.sa</a></p>
+    </footer>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script>
       // Global Variables - Branch-isolated data structures
@@ -2046,21 +2098,7 @@
       const USER_ACCOUNTS = {
           'ADMIN001': { password: 'Admin@123', role: 'admin', name: 'مدير النظام العام', branch: 'all' },
           'MANAGER001': { password: 'Manager@123', role: 'manager', name: 'مدير عام', branch: 'all' },
-          'SUP001': { password: 'Sup@123', role: 'supervisor', name: 'مشرف فرع الرياض', branch: 'الرياض' },
-          'SUP002': { password: 'Sup@123', role: 'supervisor', name: 'مشرف فرع الدمام', branch: 'الدمام' },
-          'SUP003': { password: 'Sup@123', role: 'supervisor', name: 'مشرف فرع أحد رفيدة', branch: 'أحد رفيدة' },
-          'SUP004': { password: 'Sup@123', role: 'supervisor', name: 'مشرف فرع حائل', branch: 'حائل' },
-          'SUP005': { password: 'Sup@123', role: 'supervisor', name: 'مشرف فرع نجران', branch: 'نجران' },
-          'SUP006': { password: 'Sup@123', role: 'supervisor', name: 'مشرف فرع جازان', branch: 'جازان' },
-          'SUP007': { password: 'Sup@123', role: 'supervisor', name: 'مشرف فرع سكاكا', branch: 'سكاكا' },
-          'SUP008': { password: 'Sup@123', role: 'supervisor', name: 'مشرف فرع بريدة', branch: 'بريدة' },
-          'LIB001': { password: 'Lib@123', role: 'librarian', name: 'أمين مكتبة الرياض', branch: 'الرياض' },
-          'LIB002': { password: 'Lib@123', role: 'librarian', name: 'أمين مكتبة الدمام', branch: 'الدمام' },
-          'LIB003': { password: 'Lib@123', role: 'librarian', name: 'أمين مكتبة أحد رفيدة', branch: 'أحد رفيدة' },
-          'LIB004': { password: 'Lib@123', role: 'librarian', name: 'أمين مكتبة حائل', branch: 'حائل' },
-          'LIB005': { password: 'Lib@123', role: 'librarian', name: 'أمين مكتبة نجران', branch: 'نجران' },
-          'LIB006': { password: 'Lib@123', role: 'librarian', name: 'أمين مكتبة جازان', branch: 'جازان' },
-'LIB007': { password: 'Lib@123', role: 'librarian', name: 'أمين مكتبة سكاكا', branch: 'سكاكا' },
+         
       };
 
       let currentUser = { role: '', membershipNumber: '', name: '', branch: '', authenticated: false };
@@ -2560,8 +2598,7 @@ const ValidationUtils = {
               return filtered;
           }
       };
-
-      // Enhanced Edit Functions - CRITICAL FIX: Fixed save functionality
+// Enhanced Edit Functions - CRITICAL FIX: Fixed save functionality
       function editSource(sourceId) {
           const source = DATA.sources.find(s => s.id === sourceId);
           if (!source) {
@@ -3504,11 +3541,11 @@ const ValidationUtils = {
             '<td>-</td>';
         
         const memberTypeDisplay = member.isPredefined ? 
-            `${member.memberType} <span class=""></span>` : 
+            `${member.memberType} <span class="badge badge-primary">نظام</span>` : 
             member.memberType;
         
         return `
-            <tr ${member.isPredefined ? 'style="background-color:"' : ''}>
+            <tr ${member.isPredefined ? 'style="background-color: #f0f9ff;"' : ''}>
                 <td>${member.membershipNumber}</td>
                 <td>${member.fullName}</td>
                 <td>${memberTypeDisplay}</td>
