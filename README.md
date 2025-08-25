@@ -34,25 +34,7 @@ The application is designed to run directly in a web browser without any server-
 ### Prerequisites
 
 * A modern web browser (Chrome, Firefox, Edge).
-* A local web server for development to handle ES6 module imports correctly. The [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension for VS Code is highly recommended.
 
-### Installation & Setup
-
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/your-username/rufuf-library-system.git](https://github.com/your-username/rufuf-library-system.git)
-    ```
-
-2.  **Navigate to the project directory:**
-    ```bash
-    cd rufuf-library-system
-    ```
-
-3.  **Open `index.html` with a live server:**
-    * If you are using the VS Code Live Server extension, simply right-click on `index.html` and select "Open with Live Server".
-    * This will open the application in your default browser, typically at `http://127.0.0.1:5500`.
-
----
 
 ## 📂 Project Structure
 
@@ -70,31 +52,10 @@ The project follows an **MVVM (Model-View-ViewModel)** architecture to ensure a 
 └── styles/                 # CSS stylesheets
 ```
 
-For a detailed breakdown of the architecture, please see the project documentation.
 
----
-
-## 👤 Default User Accounts
-
-The system comes with a pre-configured administrator account:
-
-* **Membership Number:** `ADMIN001`
-* **Password:** `Admin@123`
-
----
 
 ## 🤝 Contributing
 
 Contributions are welcome! If you have suggestions for improvements or want to fix a bug, please feel free to open an issue or submit a pull request.
 
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
 
----
-
-## 📜 License
-
-This project is licensed under the MIT License - see the `LICENSE` file for details.
