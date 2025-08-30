@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة المكتبات</title>
+    <title>رفـــوفـــ</title>
     <style>
 
 
@@ -51,7 +51,7 @@
         }
 
 
-.card-title, .stat-number, .btn, .menu-item, .form-label {
+.card-title, .stat-number, .btn, .menu-item, .form-label, .form-input {
     font-family: 'Byt', 'Larken', 'Segoe UI', Tahoma, Arial, sans-serif;
 }
         /* Footer Styles */
@@ -296,7 +296,7 @@
         }
 
         .card-title {
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 600;
             color: var(--dark-color);
             margin-bottom: 0.5rem;
@@ -306,6 +306,7 @@
 
         /* Consistent Filters Container */
         .filters-container {
+
             background: #f8fafc;
             padding: 1rem;
             border-radius: 8px;
@@ -665,6 +666,7 @@
             .card-header, .card-body { padding: 1rem; }
             .stat-number { font-size: 1.8rem; }
             .form-input, .search-input { font-size: 16px; }
+
         }
 
         /* Print Styles */
@@ -2075,7 +2077,7 @@
 
  <footer class="footer">
         <p>© رفـــوفـــ</p>
-        <p>صُنع في حائل ⛰️ </p>
+        <p>صُنع  بـــ❤️ في حائل  </p>
         <p>للدعم: <a href="mailto:aisha.a@ihr.com.sa">aisha.a@ihr.com.sa</a></p>
     </footer>
 
@@ -3541,7 +3543,7 @@ const ValidationUtils = {
             '<td>-</td>';
         
         const memberTypeDisplay = member.isPredefined ? 
-            `${member.memberType} <span class="badge badge-primary">نظام</span>` : 
+            `${member.memberType} <span class=""></span>` : 
             member.memberType;
         
         return `
@@ -3580,7 +3582,7 @@ const ValidationUtils = {
                       '<td>-</td>';
                   
                   const memberTypeDisplay = member.isPredefined ? 
-                      `${member.memberType} <span class="badge badge-primary">نظام</span>` : 
+                      `${member.memberType} <span class=""></span>` : 
                       member.memberType;
                   
                   return `
@@ -4208,15 +4210,15 @@ if (searchCriteria.dewey && !source.deweyClassification.toLowerCase().includes(s
             </div>
             <div class="stat-card">
                 <div class="stat-number">${sortedStats.filter(s => s.ageGroup === 'أطفال').length}</div>
-                <div class="stat-label">مصادر الأطفال المقروءة</div>
+                <div class="stat-label">مكتبة الطفل</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">${sortedStats.filter(s => s.ageGroup === 'يافعين').length}</div>
-                <div class="stat-label">مصادر اليافعين المقروءة</div>
+                <div class="stat-label">مكتبة اليافعين</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">${sortedStats.filter(s => s.ageGroup === 'عام').length}</div>
-                <div class="stat-label">المصادر العامة المقروءة</div>
+                <div class="stat-label">المكتبة الرئيسية</div>
             </div>
         </div>
     `;
@@ -4402,7 +4404,6 @@ if (searchCriteria.dewey && !source.deweyClassification.toLowerCase().includes(s
                               <th>تاريخ التسجيل</th>
                               <th>المصادر المستعارة</th>
                          <th style="border-right: 1px solid rgba(255,255,255,0.1);">الفرع</th>
-        <th class="admin-only supervisor-only" style="border-right: none;">الإجراءات</th>
     </tr>
                       </thead>
                       <tbody>
