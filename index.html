@@ -455,9 +455,13 @@
             font-size: 0.9rem;
             border-right: 1px solid rgba(255,255,255,0.1);
         }
+.table thead th:first-child {
+    border-top-right-radius: 8px;
+}
 
         .table th:last-child {
-            border-right: none;
+            border-top-left-radius: 8px;
+
         }
 
         .table td {
@@ -675,6 +679,7 @@
             .main-content { margin: 0; padding: 0; }
         }
 
+
         /* Role-based visibility */
         .admin-only, .supervisor-only, .manager-only { display: none; }
         .admin-mode .admin-only { display: inline-flex; }
@@ -887,12 +892,10 @@
 
        /* Performance Panel - Match Recent Loans Styling */
 .performance-panel {
-   background: var(--white);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-        }
+    display: flex;
+    flex-direction: column;
+}
+
 
 .performance-panel .card-header {
    padding: 1.5rem;
@@ -921,15 +924,11 @@
         }
 }
 
-.performance-panel .table {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--white);
-    border-radius: 2px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    min-width: 80px;
+.performance-panel .table th {
+    background-color: #44556A;
+    color: white;
 }
+
     </style>
 </head>
 
@@ -1598,7 +1597,7 @@
                                    <th>رقم الرف</th>
                                    <th>الفرع</th>
                                    <th style="border-right: 1px solid rgba(255,255,255,0.1);">حالة المصدر</th>
-                                   <th class="admin-only supervisor-only" style="border-right: none;">الإجراءات</th>
+<th class="admin-only supervisor-only table-actions" style="border-right: none;">الإجراءات</th>
                                </tr>
                            </thead>
                            <tbody id="sourcesTable">
@@ -1706,7 +1705,7 @@
                                    <th>الاسم الكامل</th>
                                    <th>نوع العضوية</th>
                                    <th style="border-right: 1px solid rgba(255,255,255,0.1);">الفرع</th>
-                                   <th class="admin-only supervisor-only" style="border-right: none;">الإجراءات</th>
+                                   <th class="admin-only supervisor-only" style="border-right: 1px solid rgba(255,255,255,0.1);">الإجراءات</th>
                                </tr>
                            </thead>
                            <tbody id="membersTable">
@@ -2077,7 +2076,7 @@
 
  <footer class="footer">
         <p>© رفـــوفـــ</p>
-        <p>صُنع  بـــ❤️ في حائل  </p>
+        <p>صُنع  بـــ🤍 في حائل  </p>
         <p>للدعم: <a href="mailto:aisha.a@ihr.com.sa">aisha.a@ihr.com.sa</a></p>
     </footer>
 
@@ -2600,142 +2599,128 @@ const ValidationUtils = {
               return filtered;
           }
       };
-// Enhanced Edit Functions - CRITICAL FIX: Fixed save functionality
-      function editSource(sourceId) {
-          const source = DATA.sources.find(s => s.id === sourceId);
-          if (!source) {
-              Utils.showAlert('المصدر غير موجود!', 'danger');
-              return;
-          }
+function editSource(sourceId) {
+          // Check if the provided ID is valid before doing anything else
+          if (sourceId === null || sourceId === undefined) {
+              Utils.showAlert('خطأ: معرف المصدر غير صالح. لا يمكن التعديل.', 'danger');
+              return;
+          }
 
-          if (!['admin', 'supervisor'].includes(currentUser.role)) {
-              Utils.showAlert('غير مسموح! المشرف فقط يمكنه تعديل المصادر.', 'danger');
-              return;
-          }
+          const source = DATA.sources.find(s => s.id === sourceId);
+          if (!source) {
+              Utils.showAlert('المصدر غير موجود!', 'danger');
+              return;
+          }
 
-          // Branch permission check
-          if (!['admin', 'manager'].includes(currentUser.role) && source.branch !== currentUser.branch) {
-              Utils.showAlert('لا يمكن تعديل مصدر من فرع آخر!', 'danger');
-              return;
-          }
+          if (!['admin', 'supervisor'].includes(currentUser.role)) {
+              Utils.showAlert('غير مسموح! المشرف فقط يمكنه تعديل المصادر.', 'danger');
+              return;
+          }
 
-          // Populate edit form
-          document.getElementById('editSourceId').value = source.id;
-          document.getElementById('editSourceBib').value = source.bibNumber || '';
-          document.getElementById('editSourceTitle').value = source.title || '';
-          document.getElementById('editSourceAuthor').value = source.author || '';
-          document.getElementById('editSourcePublisher').value = source.publisher || '';
-          document.getElementById('editSourceYear').value = source.publishYear || '';
-          document.getElementById('editSourceLanguage').value = source.language || 'ara';
-          document.getElementById('editSourceDewey').value = source.deweyClassification || '';
-          document.getElementById('editSourceCopies').value = source.copiesCount || 1;
-          document.getElementById('editSourceLibrary').value = source.library || '';
-          document.getElementById('editSourceSupply').value = source.source || '';
-          document.getElementById('editSourceStatus').value = source.status || 'متاح';
-          document.getElementById('editSourceLocation').value = source.location || '';
-          document.getElementById('editSourceSupplyDate').value = source.supplyDate || '';
-          document.getElementById('editSourceShelf').value = source.shelfNumber || '';
-          document.getElementById('editSourceNotes').value = source.notes || '';
+          if (!['admin', 'manager'].includes(currentUser.role) && source.branch !== currentUser.branch) {
+              Utils.showAlert('لا يمكن تعديل مصدر من فرع آخر!', 'danger');
+              return;
+          }
 
-          // Update Dewey info if present
-          if (source.deweyClassification) {
-              updateEditDeweyInfo({ value: source.deweyClassification });
-          }
+          // Populate edit form
+          document.getElementById('editSourceId').value = source.id;
+          document.getElementById('editSourceBib').value = source.bibNumber || '';
+          document.getElementById('editSourceTitle').value = source.title || '';
+          document.getElementById('editSourceAuthor').value = source.author || '';
+          document.getElementById('editSourcePublisher').value = source.publisher || '';
+          document.getElementById('editSourceYear').value = source.publishYear || '';
+          document.getElementById('editSourceLanguage').value = source.language || 'ara';
+          document.getElementById('editSourceDewey').value = source.deweyClassification || '';
+          document.getElementById('editSourceCopies').value = source.copiesCount || 1;
+          document.getElementById('editSourceLibrary').value = source.library || '';
+          document.getElementById('editSourceSupply').value = source.source || '';
+          document.getElementById('editSourceStatus').value = source.status || 'متاح';
+          document.getElementById('editSourceLocation').value = source.location || '';
+          document.getElementById('editSourceSupplyDate').value = source.supplyDate || '';
+          document.getElementById('editSourceShelf').value = source.shelfNumber || '';
+          document.getElementById('editSourceNotes').value = source.notes || '';
 
-          // Show modal
-          document.getElementById('editSourceModal').classList.add('active');
-      }
+          if (source.deweyClassification) {
+              updateEditDeweyInfo({ value: source.deweyClassification });
+          }
+          document.getElementById('editSourceModal').classList.add('active');
+      }
+    function updateSource(event) {
+          event.preventDefault();
 
-      // CRITICAL FIX: Fixed updateSource function
-      function updateSource(event) {
-    event.preventDefault();
-    
-    try {
-        const sourceId = parseInt(document.getElementById('editSourceId').value);
-        const source = DATA.sources.find(s => s.id === sourceId);
-        
-        if (!source) {
-            Utils.showAlert('المصدر غير موجود!', 'danger');
-            return;
-        }
+          try {
+              // --- 1. FIND THE SOURCE ---
+              const sourceIdValue = document.getElementById('editSourceId').value;
+              if (!sourceIdValue) {
+                  Utils.showAlert('خطأ حرج: لم يتم العثور على معرف المصدر.', 'danger');
+                  return;
+              }
+              const sourceId = parseFloat(sourceIdValue);
+              const sourceIndex = DATA.sources.findIndex(s => s.id === sourceId);
 
-        const bibNumber = document.getElementById('editSourceBib').value.trim();
-        
-        // Validate BIB number
-        if (!bibNumber || bibNumber.length !== 14 || !/^\d{14}$/.test(bibNumber)) {
-            Utils.showAlert('رقم BIB يجب أن يكون 14 رقماً بالضبط', 'danger');
-            return;
-        }
+              if (sourceIndex === -1) {
+                  Utils.showAlert('لم يتم العثور على المصدر. قد تحتاج لتحديث الصفحة.', 'danger');
+                  return;
+              }
 
-        // Check for duplicates WITHIN THE SAME BRANCH ONLY (excluding current source)
-        const userBranch = ['admin', 'manager'].includes(currentUser.role) ? source.branch : currentUser.branch;
-        const existingSource = DATA.sources.find(s => 
-            s.bibNumber === bibNumber && 
-            s.branch === userBranch && 
-            !s.deleted &&
-            s.id !== sourceId
-        );
-        
-        let notes = document.getElementById('editSourceNotes').value || '';
-        
-        // Check for duplications and special conditions
-        if (existingSource) {
-            notes = `مكرر في نفس الفرع - رقم BIB موجود مسبقاً. ${notes}`.trim();
-            Utils.showAlert('تم العثور على رقم BIB مكرر في نفس الفرع! تم إضافة ملاحظة.', 'warning');
-        }
+              // --- 2. VALIDATE THE FORM INPUTS ---
+              const bibInput = document.getElementById('editSourceBib');
+              const titleInput = document.getElementById('editSourceTitle');
+              const authorInput = document.getElementById('editSourceAuthor');
 
-        // Check for all zeros BIB (no chip)
-        if (bibNumber === '00000000000000') {
-            notes = `لا يوجد شريحة (BIB كلها أصفار). ${notes}`.trim();
-        }
+              if (!bibInput.value.trim() || bibInput.value.trim().length !== 14 || !/^\d{14}$/.test(bibInput.value.trim())) {
+                  Utils.showAlert('فشل الحفظ: رقم BIB يجب أن يكون 14 رقماً بالضبط.', 'danger');
+                  bibInput.focus();
+                  return;
+              }
+              if (!titleInput.value.trim()) {
+                  Utils.showAlert('فشل الحفظ: حقل العنوان مطلوب.', 'danger');
+                  titleInput.focus();
+                  return;
+              }
+              if (!authorInput.value.trim()) {
+                  Utils.showAlert('فشل الحفظ: حقل المؤلف مطلوب.', 'danger');
+                  authorInput.focus();
+                  return;
+              }
 
-        // Get all form values safely
-        const title = document.getElementById('editSourceTitle').value.trim();
-        const author = document.getElementById('editSourceAuthor').value.trim();
-        
-        if (!title || !author) {
-            Utils.showAlert('العنوان والمؤلف مطلوبان!', 'danger');
-            return;
-        }
+              // --- 3. UPDATE THE DATA AND SAVE ---
+              const updatedSource = {
+                  ...DATA.sources[sourceIndex],
+                  bibNumber: bibInput.value.trim(),
+                  title: titleInput.value.trim(),
+                  author: authorInput.value.trim(),
+                  publisher: document.getElementById('editSourcePublisher').value.trim(),
+                  publishYear: document.getElementById('editSourceYear').value,
+                  language: document.getElementById('editSourceLanguage').value,
+                  deweyClassification: document.getElementById('editSourceDewey').value.trim(),
+                  copiesCount: Math.max(1, parseInt(document.getElementById('editSourceCopies').value) || 1),
+                  library: document.getElementById('editSourceLibrary').value,
+                  source: document.getElementById('editSourceSupply').value,
+                  status: document.getElementById('editSourceStatus').value,
+                  location: document.getElementById('editSourceLocation').value.trim(),
+                  supplyDate: document.getElementById('editSourceSupplyDate').value,
+                  shelfNumber: document.getElementById('editSourceShelf').value.trim(),
+                  notes: document.getElementById('editSourceNotes').value.trim(),
+                  lastModified: new Date().toISOString(),
+                  modifiedBy: currentUser.name
+              };
+              
+              DATA.sources[sourceIndex] = updatedSource;
+              Storage.save();
 
-        // Update source properties with validation
-        source.bibNumber = bibNumber;
-        source.title = title;
-        source.author = author;
-        source.publisher = document.getElementById('editSourcePublisher').value.trim() || '';
-        source.publishYear = document.getElementById('editSourceYear').value || '';
-        source.language = document.getElementById('editSourceLanguage').value || 'ara';
-        source.deweyClassification = document.getElementById('editSourceDewey').value.trim() || '';
-        source.copiesCount = Math.max(1, parseInt(document.getElementById('editSourceCopies').value) || 1);
-        source.library = document.getElementById('editSourceLibrary').value || '';
-        source.source = document.getElementById('editSourceSupply').value || '';
-        source.status = document.getElementById('editSourceStatus').value || 'متاح';
-        source.location = document.getElementById('editSourceLocation').value.trim() || '';
-        source.supplyDate = document.getElementById('editSourceSupplyDate').value || '';
-        source.shelfNumber = document.getElementById('editSourceShelf').value.trim() || '';
-        source.notes = notes;
-        source.lastModified = new Date().toISOString();
-        source.modifiedBy = currentUser.name;
+              // --- 4. REFRESH THE USER INTERFACE ---
+              closeEditSourceModal(); // Close the pop-up window
+              loadSourcesTable();     // Redraw the main sources table
+              updateDashboard();      // Update the stats on the dashboard
+              Utils.showAlert('تم تحديث المصدر بنجاح!', 'success'); // Show success message
 
-        // Save to storage with error handling
-        try {
-            Storage.save();
-            closeEditSourceModal();
-            loadSourcesTable();
-            updateDashboard();
-            
-            Utils.showAlert('تم تحديث المصدر بنجاح!', 'success');
-        } catch (storageError) {
-            console.error('Storage error:', storageError);
-            Utils.showAlert('خطأ في حفظ البيانات. يرجى المحاولة مرة أخرى.', 'danger');
-        }
-        
-    } catch (error) {
-        console.error('Update source error:', error);
-        Utils.showAlert('حدث خطأ أثناء تحديث المصدر. يرجى المحاولة مرة أخرى.', 'danger');
-    }
-}
-
+          } catch (error) {
+              // This will catch any unexpected errors during the process
+              console.error("An unexpected error occurred in updateSource:", error);
+              Utils.showAlert("حدث خطأ غير متوقع أثناء الحفظ. يرجى مراجعة وحدة التحكم.", 'danger');
+          }
+      }
       function editMember(memberId) {
           const member = DATA.members.find(m => m.id === memberId);
           if (!member) {
@@ -2820,6 +2805,11 @@ const ValidationUtils = {
           document.getElementById('editMemberModal').classList.remove('active');
           document.getElementById('editMemberForm').reset();
       }
+
+function closeEditSourceModal() {
+          document.getElementById('editSourceModal').classList.remove('active');
+          document.getElementById('editSourceForm').reset();
+      }
 
       // Enhanced Delete Functions with Confirmation Modal
       function deleteSource(sourceId) {
@@ -4053,198 +4043,128 @@ if (searchCriteria.dewey && !source.deweyClassification.toLowerCase().includes(s
           document.getElementById('searchResults').style.display = 'none';
       }
 
-      // CRITICAL FIX: Updated generateReadingReport function (Request #10)
-    function generateReadingReport() {
+      function generateReadingReport() {
     const startDate = document.getElementById('reportStartDate').value;
     const endDate = document.getElementById('reportEndDate').value;
-    
+
     if (!startDate || !endDate) {
         Utils.showAlert('يرجى تحديد فترة التقرير', 'warning');
         return;
     }
-    
+
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
-    // Get all borrowings within date range (including returns)
-    let periodBorrowings = DataFilter.getFilteredBorrowings({}).filter(b => {
-        const borrowDate = new Date(b.borrowDate);
-        return borrowDate >= start && borrowDate <= end;
+    end.setHours(23, 59, 59, 999);
+
+    // Get borrowings that were RETURNED within the date range to count them as "read"
+    const returnedBorrowings = DataFilter.getFilteredBorrowings({}).filter(b => {
+        if (!b.returned || !b.returnDate) return false;
+        const returnDate = new Date(b.returnDate);
+        return returnDate >= start && returnDate <= end;
     });
+
+    if (returnedBorrowings.length === 0) {
+        showReport('تقرير المصادر المقروءة', '<div class="alert alert-info">لا توجد مصادر تم إرجاعها (مقروءة) في الفترة المحددة.</div>');
+        currentReportData = [];
+        currentReportType = 'تقرير_المصادر_المقروءة';
+        return;
+    }
     
-    // Get returned borrowings for reading analysis
-    const returnedBorrowings = periodBorrowings.filter(b => 
-        b.returned && 
-        b.returnDate && 
-        new Date(b.returnDate) >= start && 
-        new Date(b.returnDate) <= end
-    );
-    
-    // Group by source to count reading frequency
     const readingStats = {};
     returnedBorrowings.forEach(borrowing => {
         const source = DATA.sources.find(s => s.id === borrowing.sourceId);
         if (!source) return;
         
-        const member = DATA.members.find(m => m.membershipNumber === borrowing.membershipNumber) ||
-                      USER_ACCOUNTS[borrowing.membershipNumber];
         const libraryType = Utils.getLibraryTypeFromBib(source.bibNumber);
         const ageGroup = libraryType.type === 'child' ? 'أطفال' : 
-                        libraryType.type === 'youth' ? 'يافعين' : 'عام';
-        const thematicClassification = Utils.getDeweyCategory(source.deweyClassification) || 'غير محدد';
-        
+                         libraryType.type === 'youth' ? 'يافعين' : 'عام';
+
         if (!readingStats[source.id]) {
             readingStats[source.id] = {
                 title: source.title,
                 author: source.author,
                 bibNumber: source.bibNumber,
-                thematicClassification,
-                ageGroup,
-                library: libraryType.name,
                 branch: source.branch,
+                library: libraryType.name,
+                ageGroup: ageGroup, // Add age group here
                 readCount: 0,
-                lastReadDate: borrowing.returnDate,
-                readers: [],
-                borrowingHistory: []
             };
         }
-        
         readingStats[source.id].readCount++;
-        readingStats[source.id].readers.push({
-            membershipNumber: borrowing.membershipNumber,
-            memberName: member ? (member.fullName || member.name) : 'غير محدد',
-            borrowDate: borrowing.borrowDate,
-            returnDate: borrowing.returnDate,
-            employee: borrowing.employeeName,
-            returnEmployee: borrowing.returnEmployeeName,
-            branch: borrowing.branch
-        });
-        
-        readingStats[source.id].borrowingHistory.push({
-            borrowDate: Utils.formatDate(borrowing.borrowDate),
-            returnDate: Utils.formatDate(borrowing.returnDate),
-            member: member ? (member.fullName || member.name) : 'غير محدد',
-            employee: borrowing.employeeName || 'غير محدد'
-        });
-        
-        if (new Date(borrowing.returnDate) > new Date(readingStats[source.id].lastReadDate)) {
-            readingStats[source.id].lastReadDate = borrowing.returnDate;
-        }
     });
-    
+
     const sortedStats = Object.values(readingStats).sort((a, b) => b.readCount - a.readCount);
-    
-    // Statistics summary
-    const totalUniqueReaders = [...new Set(returnedBorrowings.map(b => b.membershipNumber))].length;
     const mostReadSource = sortedStats[0];
-    const averageReadsPerSource = sortedStats.length ? (returnedBorrowings.length / sortedStats.length).toFixed(1) : 0;
-    
+
     let content = `
-        <h4>📖 تقرير المصادر المقروءة المحدث</h4>
-        <div class="alert alert-info" style="margin-bottom: 2rem;">
-            <strong>📊 ملخص التقرير:</strong><br>
+        <h4>📖 تقرير المصادر المقروءة</h4>
+        <div class="alert alert-info">
             <strong>الفترة:</strong> من ${Utils.formatDate(startDate)} إلى ${Utils.formatDate(endDate)}<br>
             <strong>الفرع:</strong> ${['admin', 'manager'].includes(currentUser.role) ? 'جميع الفروع' : currentUser.branch}<br>
+            <strong>إجمالي عمليات القراءة (الإرجاع):</strong> ${returnedBorrowings.length} عملية<br>
             <strong>إجمالي المصادر المقروءة:</strong> ${sortedStats.length} مصدر<br>
-            <strong>إجمالي عمليات القراءة:</strong> ${returnedBorrowings.length} عملية<br>
-            <strong>عدد القراء الفريدين:</strong> ${totalUniqueReaders} قارئ<br>
-            <strong>متوسط القراءات لكل مصدر:</strong> ${averageReadsPerSource} قراءة<br>
-            ${mostReadSource ? `<strong>أكثر المصادر قراءة:</strong> ${mostReadSource.title} (${mostReadSource.readCount} مرة)` : ''}
+            ${mostReadSource ? `<strong>أكثر المصادر قراءة:</strong> "${mostReadSource.title}" (${mostReadSource.readCount} مرة)` : ''}
         </div>
-        
+
         <div class="table-container">
             <table class="table">
                 <thead>
                     <tr>
                         <th>الترتيب</th>
-                        <th>رقم BIB</th>
                         <th>عنوان المصدر</th>
                         <th>المؤلف</th>
-                        <th>التصنيف الموضوعي</th>
-                        <th>الفئة العمرية</th>
-                        <th>المكتبة</th>
-                        <th>الفرع</th>
                         <th>عدد مرات القراءة</th>
-                        <th>تاريخ آخر قراءة</th>
-                        <th>آخر قارئ</th>
-                        <th>آخر موظف إرجاع</th>
+                        <th>الفئة العمرية</th>
+                        <th>الفرع</th>
                     </tr>
                 </thead>
                 <tbody>
-    `;
-    
-    if (sortedStats.length === 0) {
-        content += '<tr><td colspan="12">لا توجد مصادر مقروءة في هذه الفترة</td></tr>';
-    } else {
-        content += sortedStats.map((stat, index) => {
-            const lastReader = stat.readers[stat.readers.length - 1];
-            return `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${stat.bibNumber}</td>
-                    <td>${stat.title}</td>
-                    <td>${stat.author}</td>
-                    <td>${stat.thematicClassification}</td>
-                    <td>${stat.ageGroup}</td>
-                    <td>${stat.library}</td>
-                    <td>${stat.branch}</td>
-                    <td><span class="badge badge-primary">${stat.readCount}</span></td>
-                    <td>${Utils.formatDate(stat.lastReadDate)}</td>
-                    <td>${lastReader?.memberName || 'غير محدد'}</td>
-                    <td>${lastReader?.returnEmployee || 'غير محدد'}</td>
-                </tr>
-            `;
-        }).join('');
-    }
-    
-    content += `
+                    ${sortedStats.map((stat, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${stat.title}</td>
+                            <td>${stat.author}</td>
+                            <td><span class="badge badge-primary">${stat.readCount}</span></td>
+                            <td>${stat.ageGroup}</td>
+                            <td>${stat.branch}</td>
+                        </tr>
+                    `).join('')}
                 </tbody>
             </table>
         </div>
-        
+
         <h5 style="margin-top: 2rem;">📈 تحليل إضافي للقراءة:</h5>
         <div class="stats-grid" style="margin-top: 1rem;">
             <div class="stat-card">
                 <div class="stat-number">${sortedStats.filter(s => s.readCount >= 3).length}</div>
-                <div class="stat-label">مصادر مقروءة 3+ مرات</div>
+                <div class="stat-label">مصادر قُرئت 3 مرات أو أكثر</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">${sortedStats.filter(s => s.ageGroup === 'أطفال').length}</div>
-                <div class="stat-label">مكتبة الطفل</div>
+                <div class="stat-number">${sortedStats.filter(s => s.ageGroup === 'أطفال').reduce((acc, s) => acc + s.readCount, 0)}</div>
+                <div class="stat-label">إجمالي قراءات الأطفال</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">${sortedStats.filter(s => s.ageGroup === 'يافعين').length}</div>
-                <div class="stat-label">مكتبة اليافعين</div>
+                <div class="stat-number">${sortedStats.filter(s => s.ageGroup === 'يافعين').reduce((acc, s) => acc + s.readCount, 0)}</div>
+                <div class="stat-label">إجمالي قراءات اليافعين</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">${sortedStats.filter(s => s.ageGroup === 'عام').length}</div>
-                <div class="stat-label">المكتبة الرئيسية</div>
+                <div class="stat-number">${sortedStats.filter(s => s.ageGroup === 'عام').reduce((acc, s) => acc + s.readCount, 0)}</div>
+                <div class="stat-label">إجمالي القراءات العامة</div>
             </div>
         </div>
     `;
-    
-    showReport('تقرير المصادر المقروءة المحدث', content);
-    
-    // Store enhanced data for export
-    currentReportData = sortedStats.map((stat, index) => {
-        const lastReader = stat.readers[stat.readers.length - 1];
-        return {
-            'الترتيب': index + 1,
-            'رقم BIB': stat.bibNumber,
-            'عنوان المصدر': stat.title,
-            'المؤلف': stat.author,
-            'التصنيف الموضوعي': stat.thematicClassification,
-            'الفئة العمرية': stat.ageGroup,
-            'المكتبة': stat.library,
-            'الفرع': stat.branch,
-            'عدد مرات القراءة': stat.readCount,
-            'تاريخ آخر قراءة': Utils.formatDate(stat.lastReadDate),
-            'آخر قارئ': lastReader?.memberName || 'غير محدد',
-            'آخر موظف إرجاع': lastReader?.returnEmployee || 'غير محدد',
-            'تاريخ الاستعارة الأخيرة': lastReader ? Utils.formatDate(lastReader.borrowDate) : 'غير محدد'
-        };
-    });
-    currentReportType = 'تقرير_المصادر_المقروءة_المحدث';
+
+    showReport('تقرير المصادر المقروءة', content);
+
+    currentReportData = sortedStats.map((stat, index) => ({
+        'الترتيب': index + 1,
+        'عنوان المصدر': stat.title,
+        'المؤلف': stat.author,
+        'عدد مرات القراءة': stat.readCount,
+        'الفئة العمرية': stat.ageGroup,
+        'الفرع': stat.branch
+    }));
+    currentReportType = 'تقرير_المصادر_المقروءة';
 }
 
       // Updated Report Functions
@@ -4433,60 +4353,121 @@ if (searchCriteria.dewey && !source.deweyClassification.toLowerCase().includes(s
           showReport('تقرير الأعضاء', content);
       }
 
-      function generateBorrowingReport() {
-          const borrowings = DataFilter.getFilteredBorrowings({});
-          const activeBorrowings = borrowings.filter(b => !b.returned);
-          const completedBorrowings = borrowings.filter(b => b.returned);
-          
-          const content = `
-              <h4>تقرير الإعارات</h4>
-              <p><strong>الفرع:</strong> ${['admin', 'manager'].includes(currentUser.role) ? 'جميع الفروع' : currentUser.branch}</p>
-              <p><strong>إجمالي الإعارات:</strong> ${borrowings.length}</p>
-              <p><strong>الإعارات النشطة:</strong> ${activeBorrowings.length}</p>
-              <p><strong>الإعارات المكتملة:</strong> ${completedBorrowings.length}</p>
-              
-              <h5>الإعارات النشطة:</h5>
-              <div class="table-container">
-                  <table class="table">
-                      <thead>
-                          <tr>
-                              <th>العضو</th>
-                              <th>المصدر</th>
-                              <th>تاريخ الإعارة</th>
-                              <th>تاريخ الإرجاع المطلوب</th>
-                              <th>الحالة</th>
-                              <th>الفرع</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          ${activeBorrowings.length === 0 ? 
-                              '<tr><td colspan="6">لا توجد إعارات نشطة</td></tr>' :
-                              activeBorrowings.map(b => {
-                                  const member = DATA.members.find(m => m.membershipNumber === b.membershipNumber) ||
-                                                USER_ACCOUNTS[b.membershipNumber];
-                                  const source = DATA.sources.find(s => s.id === b.sourceId);
-                                  const dueDate = new Date(b.dueDate);
-                                  const isOverdue = dueDate < new Date();
-                                  
-                                  return `
-                                      <tr>
-                                          <td>${member ? (member.fullName || member.name) : 'غير محدد'}</td>
-                                          <td>${source ? source.title : 'غير محدد'}</td>
-                                          <td>${Utils.formatDate(b.borrowDate)}</td>
-                                          <td>${Utils.formatDate(b.dueDate)}</td>
-                                          <td><span class="badge ${isOverdue ? 'badge-danger' : 'badge-success'}">${isOverdue ? 'متأخر' : 'نشط'}</span></td>
-                                          <td>${b.branch || 'غير محدد'}</td>
-                                      </tr>
-                                  `;
-                              }).join('')
-                          }
-                      </tbody>
-                  </table>
-              </div>
-          `;
-          
-          showReport('تقرير الإعارات', content);
-      }
+function generateBorrowingReport() {
+    const startDate = document.getElementById('reportStartDate').value;
+    const endDate = document.getElementById('reportEndDate').value;
+
+    if (!startDate || !endDate) {
+        Utils.showAlert('يرجى تحديد فترة التقرير أولاً', 'warning');
+        return;
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999); // Ensure the end date includes the entire day
+
+    const periodBorrowings = DataFilter.getFilteredBorrowings({}).filter(b => {
+        const borrowDate = new Date(b.borrowDate);
+        return borrowDate >= start && borrowDate <= end;
+    });
+
+    const activeBorrowings = periodBorrowings.filter(b => !b.returned);
+    const completedBorrowings = periodBorrowings.filter(b => b.returned);
+
+    let content = `
+        <h4>تقرير الإعارات المفصل</h4>
+        <div class="alert alert-info">
+            <strong>الفترة:</strong> من ${Utils.formatDate(startDate)} إلى ${Utils.formatDate(endDate)}<br>
+            <strong>الفرع:</strong> ${['admin', 'manager'].includes(currentUser.role) ? 'جميع الفروع' : currentUser.branch}<br>
+            <strong>إجمالي الإعارات في الفترة:</strong> ${periodBorrowings.length}<br>
+            <strong>الإعارات النشطة:</strong> ${activeBorrowings.length}<br>
+            <strong>الإعارات المكتملة:</strong> ${completedBorrowings.length}
+        </div>
+
+        <h5>الإعارات النشطة (${activeBorrowings.length})</h5>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>العضو</th>
+                        <th>المصدر</th>
+                        <th>تاريخ الإعارة</th>
+                        <th>تاريخ الإرجاع المطلوب</th>
+                        <th>الحالة</th>
+                        <th>الفرع</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${activeBorrowings.length === 0 ? '<tr><td colspan="6">لا توجد إعارات نشطة في هذه الفترة</td></tr>' :
+                    activeBorrowings.map(b => {
+                        const member = DATA.members.find(m => m.membershipNumber === b.membershipNumber) || USER_ACCOUNTS[b.membershipNumber];
+                        const source = DATA.sources.find(s => s.id === b.sourceId);
+                        const isOverdue = new Date(b.dueDate) < new Date();
+                        return `
+                            <tr>
+                                <td>${member ? (member.fullName || member.name) : 'غير محدد'}</td>
+                                <td>${source ? source.title : 'مصدر محذوف'}</td>
+                                <td>${Utils.formatDate(b.borrowDate)}</td>
+                                <td>${Utils.formatDate(b.dueDate)}</td>
+                                <td><span class="badge ${isOverdue ? 'badge-danger' : 'badge-success'}">${isOverdue ? 'متأخر' : 'نشط'}</span></td>
+                                <td>${b.branch || '-'}</td>
+                            </tr>`;
+                    }).join('')}
+                </tbody>
+            </table>
+        </div>
+
+        <h5 style="margin-top: 2rem;">الإعارات المكتملة (${completedBorrowings.length})</h5>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>العضو</th>
+                        <th>المصدر</th>
+                        <th>تاريخ الإعارة</th>
+                        <th>تاريخ الإرجاع</th>
+                        <th>الحالة</th>
+                        <th>الفرع</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${completedBorrowings.length === 0 ? '<tr><td colspan="6">لا توجد إعارات مكتملة في هذه الفترة</td></tr>' :
+                    completedBorrowings.map(b => {
+                        const member = DATA.members.find(m => m.membershipNumber === b.membershipNumber) || USER_ACCOUNTS[b.membershipNumber];
+                        const source = DATA.sources.find(s => s.id === b.sourceId);
+                        const isLate = new Date(b.returnDate) > new Date(b.dueDate);
+                        return `
+                            <tr>
+                                <td>${member ? (member.fullName || member.name) : 'غير محدد'}</td>
+                                <td>${source ? source.title : 'مصدر محذوف'}</td>
+                                <td>${Utils.formatDate(b.borrowDate)}</td>
+                                <td>${Utils.formatDate(b.returnDate)}</td>
+                                <td><span class="badge ${isLate ? 'badge-warning' : 'badge-success'}">${isLate ? 'متأخر' : 'في الوقت'}</span></td>
+                                <td>${b.branch || '-'}</td>
+                            </tr>`;
+                    }).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    showReport('تقرير الإعارات المفصل', content);
+
+    // Prepare data for export
+    currentReportData = periodBorrowings.map(b => {
+        const member = DATA.members.find(m => m.membershipNumber === b.membershipNumber) || USER_ACCOUNTS[b.membershipNumber];
+        const source = DATA.sources.find(s => s.id === b.sourceId);
+        return {
+            'العضو': member ? (member.fullName || member.name) : 'غير محدد',
+            'المصدر': source ? source.title : 'مصدر محذوف',
+            'تاريخ الإعارة': Utils.formatDate(b.borrowDate),
+            'الحالة': b.returned ? 'مكتمل' : 'نشط',
+            'تاريخ الإرجاع': b.returnDate ? Utils.formatDate(b.returnDate) : '-',
+            'الفرع': b.branch
+        };
+    });
+    currentReportType = 'تقرير_الإعارات';
+}
 
       function generateLibraryTypeReport() {
           const sources = DataFilter.getFilteredSources({});
